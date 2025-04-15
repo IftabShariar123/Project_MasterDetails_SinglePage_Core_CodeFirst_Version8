@@ -1,0 +1,135 @@
+﻿@model Evidence_MDetails_SinglePage_Core_CF.Models.Applicant
+
+<form id="editApplicantForm" enctype="multipart/form-data">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label>Date</label>
+        <input type="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    
+
+    <div class="form-group" style="width:400px">
+        <label>Name</label>
+        <input name="Name" value="@Model.Name" class="form-control" />
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label>Gender</label>
+        <input name="Gender" value="@Model.Gender" class="form-control" />
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label>Age</label>
+        <input name="Age" value="@Model.Age" class="form-control" />
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label>Qualification</label>
+        <input name="Qualification" value="@Model.Qualification" class="form-control" />
+    </div>
+
+    <div class="form-group" style="width:400px">
+        <label>Total Experience</label>
+        <input name="TotalExperience" value="@Model.TotalExperience" class="form-control" />
+    </div>
+    @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+    {
+        <div class="form-group">
+            <label>Current Photo</label><br />
+            <img src="~/Images/@Model.PhotoUrl" alt="Applicant Photo" style="max-width: 150px; height: auto;" class="img-thumbnail" />
+        </div>
+    }
+
+    <div class="form-group" >
+        <label>Change Photo</label>
+        <input type="file" name="ProfilePhoto" id="customFile" class="form-control-file" />
+    </div>
+
+
+    <div>
+        <img id="previewImage"
+             style="width: 150px; height: 150px; object-fit: cover; border: 1px solid #ccc; border-radius: 8px;" />
+    </div>
+
+   
+
+
+
+
+    <!-- Show Experiences -->
+    <table class="table">
+        <thead>
+            <tr><th>Company</th><th>Designation</th><th>Years</th></tr>
+        </thead>
+        <tbody id="experienceTable">
+            @for (int i = 0; i < Model.Experience.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input name="Experience[@i].CompanyName" value="@Model.Experience[i].CompanyName" class="form-control" />
+                    </td>
+                    <td>
+                        <input name="Experience[@i].Designation" value="@Model.Experience[i].Designation" class="form-control" />
+                    </td>
+                    <td>
+                        <input name="Experience[@i].YearsWorked" value="@Model.Experience[i].YearsWorked" class="form-control" />
+                        <input type="hidden" name="Experience[@i].ExperienceId" value="@Model.Experience[i].ExperienceId" />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-experience">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+    <div class="text-right">
+        <button type="submit" class="btn btn-success">Save Changes</button>
+     
+    </div>
+</form>
+
+<script>
+   
+
+
+        function renumberExperienceRows() {
+        $('#experienceTable tr').each(function (index) {
+            $(this).find('input, select, textarea').each(function () {
+                var name = $(this).attr('name');
+                if (name) {
+                    var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+                    $(this).attr('name', newName);
+                }
+            });
+        });
+        }
+
+    $(document).on('click', '.remove-experience', function () {
+        $(this).closest('tr').remove();
+        renumberExperienceRows();
+    });
+
+
+
+    document.getElementById('customFile').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+
+</script>
